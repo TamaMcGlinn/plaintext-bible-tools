@@ -6,6 +6,6 @@ The King James Version of the bible, in plaintext format for scripting.
 
 Fuzzy search into the bible.
 
-
+![versefinder demo](https://i.imgur.com/jka2kwX.gif)
 
 Add the root directory of this repository to your $PATH to use.
