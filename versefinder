@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 OWN_DIR="$(dirname "$(readlink -f "$0")")"
-LOCATION=$(awk ' { print "+" FNR " " FILENAME " " $0 } ' kjv/*.txt | fzf --with-nth 3.. | cut -d' ' -f1,2)
+LOCATION=$(awk ' { print "+" FNR " " FILENAME " " $0 } ' $OWN_DIR/kjv/*.txt | fzf --with-nth 3.. | cut -d' ' -f1,2)
 if [ "$LOCATION" != "" ]; then
   $EDITOR $LOCATION -c 'normal zz'
 fi
