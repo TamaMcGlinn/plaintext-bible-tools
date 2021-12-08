@@ -17,7 +17,7 @@ if [ "$#" -gt 0 ]; then
       # Build a command to print around that line
       CONTEXT_LINES=4
       # but remove the verse descriptor at the beginning of each line https://stackoverflow.com/a/2961994/2144408
-      CONTEXT_COMMAND="{ \$1=\"\"; \$2=\"\"; if(NR==$LINE) printf \"--> \"; if(NR >= $LINE-$CONTEXT_LINES && NR <= $LINE+$CONTEXT_LINES) print substr(\$0,4) }"
+      CONTEXT_COMMAND="{ if(NR==$LINE) { printf \"\n%s\n\n\",\$0; } else { \$1=\"\"; \$2=\"\"; if(NR >= $LINE-$CONTEXT_LINES && NR <= $LINE+$CONTEXT_LINES) print substr(\$0,4) }}"
 
       # color each word in the search string
       COLORING_PATTERN=$(echo $SEARCH_STRING | sed 's/ /|/g')
