@@ -1,6 +1,34 @@
 #!/usr/bin/env bash
 OWN_DIR="$(dirname "$(readlink -f "$0")")"
-LOCATION=$(awk ' { print "+" FNR " " FILENAME " " $0 } ' $OWN_DIR/kjv/*.txt | fzf --with-nth 3.. | cut -d' ' -f1,2)
+
+# previewer is a script inside this script; if you pass e.g.
+# --previewer /path/to/file +62 things command
+# it will preview around that line, highlighing the words things and command
+if [ "$#" -gt 0 ]; then
+    if [ "$1" = "--previewer" ]; then
+      SEARCH_STRING="${@:3}"
+
+      # Get LINE and FILE separately from the second parameter
+      set -- junk $2
+      shift
+      LINE=$1
+      FILE=$2
+
+      # Build a command to print around that line
+      CONTEXT_LINES=4
+      # but remove the verse descriptor at the beginning of each line https://stackoverflow.com/a/2961994/2144408
+      CONTEXT_COMMAND="{ \$1=\"\"; \$2=\"\"; if(NR==$LINE) printf \"--> \"; if(NR >= $LINE-$CONTEXT_LINES && NR <= $LINE+$CONTEXT_LINES) print substr(\$0,4) }"
+
+      # color each word in the search string
+      COLORING_PATTERN=$(echo $SEARCH_STRING | sed 's/ /|/g')
+      # the final |$ matches every line, so as not to filter but only color
+      awk -F: "$CONTEXT_COMMAND" $FILE | grep -i --color=always -E "$COLORING_PATTERN|$"
+      exit
+    fi
+fi
+
+PREVIEW_COMMAND='echo {} | cut -d" " -f1,2 | xargs -I{} versefinder --previewer {} {q}'
+LOCATION=$(awk ' { print "+" FNR " " FILENAME " " $0 } ' $OWN_DIR/kjv/*.txt | fzf --with-nth 3.. --preview "$PREVIEW_COMMAND" | cut -d' ' -f1,2)
 if [ "$LOCATION" != "" ]; then
   $EDITOR $LOCATION -c 'normal zz'
 fi
