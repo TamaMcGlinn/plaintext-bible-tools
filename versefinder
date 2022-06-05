@@ -28,7 +28,7 @@ if [ "$#" -gt 0 ]; then
 fi
 
 PREVIEW_COMMAND='echo {} | cut -d" " -f1,2 | xargs -I{} versefinder --previewer {} {q}'
-LOCATION=$(awk ' { print "+" FNR " " FILENAME " " $0 } ' $OWN_DIR/kjv/*.txt | fzf --with-nth 3.. --no-hscroll --preview-window right,84%,border --preview "$PREVIEW_COMMAND" | cut -d' ' -f1,2)
+LOCATION=$(awk ' { print "+" FNR " " FILENAME " " $0 } ' $OWN_DIR/kjv/*.txt | fzf -i --with-nth 3.. --no-hscroll --preview-window right,84%,border --preview "$PREVIEW_COMMAND" | cut -d' ' -f1,2)
 if [ "$LOCATION" != "" ]; then
   $EDITOR $LOCATION -c 'normal zz'
 fi
